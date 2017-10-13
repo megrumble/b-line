@@ -8,68 +8,108 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
         crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
-        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
-  
- <!--AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ-->
-<!-- API key AIzaSyDp0833P5KL4yRun8C6wnYNsR2CWgt8CvQ -->
+
+    <!-- <a ping="chrome-extension://gcbommkclmclpchllfjekcdonpmejbdp/" id="link"></a>
+    <script>
+        link.click()
+    </script> -->
+    <!--AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ-->
+    <!-- API key AIzaSyDp0833P5KL4yRun8C6wnYNsR2CWgt8CvQ -->
 </head>
+
 <body>
+
     <h2>User location</h2>
     <p> click to get your location</p>
-    <button class="btn btn-primary" id="demo"></button>`
-    <div id="map" style="height: 100%"></div>
+    <button class="btn btn-primary" id="button"></button>`
+    <div id="map" style="height: 400px; width : 100%"></div>
+
     <script>
-        var x = $("#demo").on("click", getLocation );
+        'use strict';
         var latlon;
         var map;
-     
-      
-        
-function getLocation() {
-    console.log("hi");
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-function showPosition(position) { 
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude; 
-}
-function showError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            x.innerHTML = "User denied the request for Geolocation."
-            break;
-        case error.POSITION_UNAVAILABLE:
-            x.innerHTML = "Location information is unavailable."
-            break;
-        case error.TIMEOUT:
-            x.innerHTML = "The request to get user location timed out."
-            break;
-        case error.UNKNOWN_ERROR:
-            x.innerHTML = "An unknown error occurred."
-            break;
-    }
-}
-function showPosition(position) {
-    latlon = position.coords.latitude + "," + position.coords.longitude;
-console.log (latlon);
-};
-function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: latlon,
-          zoom: 8
+        $(document).ready(function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+
+            $("#button").on("click", getLocation);
+
+
+
+
+            function getLocation() {
+                console.log("hi");
+                makeCall();
+            }
+
+            function showPosition(position) {
+                // x.innerHTML = "Latitude: " + position.coords.latitude + 
+                // "<br>Longitude: " + position.coords.longitude;
+                latlon = position.coords.latitude + "," + position.coords.longitude;
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    },
+                    zoom: 12
+                });
+                var marker = new google.maps.Marker({
+                    position: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+
+                    },
+                    map: map
+                });
+                console.log(latlon);
+            }
+
+            function showError(error) {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        x.innerHTML = "User denied the request for Geolocation."
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        x.innerHTML = "Location information is unavailable."
+                        break;
+                    case error.TIMEOUT:
+                        x.innerHTML = "The request to get user location timed out."
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        x.innerHTML = "An unknown error occurred."
+                        break;
+                }
+            }
+
+            function makeCall() {
+                var queryURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + latlon +
+                    "&zoom=8&key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ";
+                $.ajax({
+                        url: queryURL,
+                        method: "GET"
+                    })
+                    .done(function (response) {
+                        console.log(queryURL);
+
+                        console.log(response);
+                        // storing the data from the AJAX request in the results variable
+                        var results = response.data;
+                    });
+            }
+
+
         });
-    }
-    
-</script>
-  <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ&callback=initMap">
-</script>
+
+        function initMap() {}
+    </script>
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ&callback=initMap" async
+        defer></script>
 </body>
 
 </html>
