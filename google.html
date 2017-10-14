@@ -24,6 +24,8 @@
     <button class="btn btn-primary" id="button"></button>`
     <div id="map" style="height: 400px; width : 100%"></div>
     <div id="directions panel"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ&callback=initMap" async
+        defer></script>
     <script>
         'use strict';
         var latlon;
@@ -92,18 +94,20 @@
             }
 
             function makeCall() {
-                var queryURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + "&destination=" +
-                    "&key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ"
+                var queryURL =
+                    "https://maps.googleapis.com/maps/api/directions/json?origin=35.228306499999995,-80.8349977&destination=10518+Glenmeade+Road+Corneius+NC&key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ"
                 $.ajax({
                         url: queryURL,
-                        method: "GET"
+                        method: "GET",
+                        dataType: "jsonp",
+                        cache: false,
                     })
                     .done(function (response) {
-                        console.log(queryURL);
+                        // console.log(queryURL);
 
-                        console.log(response);
+                        console.log("done");
                         // storing the data from the AJAX request in the results variable
-                        var results = response.data;
+                        // var results = response.data;
                     });
             }
 
@@ -112,9 +116,7 @@
 
         function initMap() {}
     </script>
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2xlseMz-CzF10Yq2Zeccc4gSS3bimSRQ&callback=initMap" async
-        defer></script>
+
 </body>
 
 </html>
