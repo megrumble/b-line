@@ -11,8 +11,9 @@ html, body {
   background-size: cover;
   background: linear-gradient(red, black);
   overflow-x: hidden;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
-
+a { text-shadow: none;}
 h1 { font-size: 85px; }
 
 .jumbotron {
@@ -42,8 +43,10 @@ h1 { font-size: 85px; }
 }
 
 #footer {
+  padding-top: 15px;
   text-align: center;
   background-color: transparent;
+  letter-spacing: 5px;
 }
 #login-screen, #craving-select-screen, #splash-screen  {
   position: relative;
@@ -53,6 +56,7 @@ h1 { font-size: 85px; }
   min-height: 85vh;
   display: none;
   opacity: 0;
+  
 }
 #splash-screen {
   display: block;
@@ -69,9 +73,10 @@ h1 { font-size: 85px; }
   left: 0;
   top: 0;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   background-color: rgba(0,0,0,.7);
-  z-index: 9999;
+  z-index: 99999;
 }
 .loading-icon {
   color: orange;
@@ -84,7 +89,7 @@ h1 { font-size: 85px; }
 .craving-buttons-group {
   margin-top: 40px;
 }
-.craving-buttons-group button {
+.craving-buttons-group a {
   display: block;
   margin: 10px auto;
   
@@ -98,6 +103,7 @@ h1 { font-size: 85px; }
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
+  z-index: 10;
 }
 
 .craving-check {
