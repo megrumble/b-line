@@ -101,11 +101,11 @@ $(document).ready(function () {
             }
             return 0;
         },
-        sortByPrice: function (a, b) {
-            if (a.price_range < b.price_range) {
+        sortByQuality: function (a, b) {
+            if (a.aggregate_rating < b.aggregate_rating) {
                 return -1;
             }
-            if (a.price_range > b.price_range) {
+            if (a.aggregate_rating > b.aggregate_rating) {
                 return 1;
             }
             return 0;
@@ -164,14 +164,45 @@ $(document).ready(function () {
         },
         switchScreens: function (closeId, openId, callback) {
             $(closeId).animate({ opacity: 0 }, 500, function () {
-                $(closeId).css({ "display": "none", "height": 0 });
-                $(openId).css({ "display": "block", "min-height": "85vh" });
+                $(closeId).css({ "display": "none", "height": 0, "z-index" : "0" });
+                $(openId).css({ "display": "block", "min-height": "85vh", "z-index" : "9" });
+                
                 $(openId).animate({ opacity: 1 }, 500, function () {
                     if (callback) {
                         callback();
                     }
                 });
             });
+        },
+        findCraving(type) {
+            if (app.currentCraving === 0) {
+                app.showAlert("No craving", "Please select a craving to continue!");
+                return;
+            }
+            app.showLoadingScreen();
+            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=9000`;
+            app.restaurantResults.length = 0;
+
+            app.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
+
+                response.restaurants.forEach(function (currentValue) {
+                    var rest = currentValue.restaurant;
+                    var newRestaurant = new Restaurant(rest.id, rest.name, rest.location.address, rest.location.latitude, rest.location.longitude,
+                        rest.thumb, rest.price_range, rest.average_cost_for_two, rest.featured_image, rest.user_rating.aggregate_rating);
+                    newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
+
+
+                    app.restaurantResults.push(newRestaurant);
+                });
+                console.log(app.restaurantResults);
+                if(type === "fast") {
+                    app.restaurantResults.sort(app.sortByDistance);
+                } else {
+                    app.restaurantResults.sort(app.sortByQuality);
+                }
+                app.hideLoadingScreen();
+            })
+
         },
         eventListeners: function () {
             $("#btn-sign-out").on("click", function () {
@@ -182,32 +213,10 @@ $(document).ready(function () {
                     // An error happened.
                 });
             });
-            $("#btn-find-craving").on('click', function () {
-                if (app.currentCraving === 0) {
-                    app.showAlert("No craving", "Please select a craving to continue!");
-                    return;
-                }
-                app.showLoadingScreen();
-                var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=9000`;
-                app.restaurantResults.length = 0;
+            
+            $("#btn-fast").on('click', function(e) { e.preventDefault(); app.findCraving("fast") });
+            $("#btn-best").on('click', function(e) { e.preventDefault(); app.findCraving("best") });
 
-                app.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
-
-                    response.restaurants.forEach(function (currentValue) {
-                        var rest = currentValue.restaurant;
-                        var newRestaurant = new Restaurant(rest.id, rest.name, rest.location.address, rest.location.latitude, rest.location.longitude,
-                            rest.thumb, rest.price_range, rest.average_cost_for_two, rest.featured_image, rest.user_rating.aggregate_rating);
-                        newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
-
-
-                        app.restaurantResults.push(newRestaurant);
-                    });
-                    console.log(app.restaurantResults);
-                    app.restaurantResults.sort(app.sortByDistance);
-
-                    app.hideLoadingScreen();
-                })
-            });
             $("#btn-sign-in").on("click", function () {
                 firebase.auth().signInWithRedirect(provider);
             });
