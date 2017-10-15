@@ -1,0 +1,83 @@
+@font-face {
+  font-family: Heavitas;
+  src: url(../fonts/Heavitas.ttf);
+}
+
+html, body {
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  font-family: Heavitas;
+  background-color: red;
+  background-size: cover;
+  background: linear-gradient(red, black);
+}
+
+.jumbotron {
+  background-color: transparent;
+}
+
+#awning {
+  background-image: url();
+}
+
+.dropdown {
+  text-align: right;
+}
+
+.container {
+  text-align: center;
+}
+
+#title {
+  font-size: 65px;
+}
+
+#wrapper {
+  text-align: center;
+  margin: 15px;
+}
+
+#footer {
+  text-align: center;
+  background-color: transparent;
+}
+
+
+/*Extra small devices (portrait phones, less than 576px)
+ No media query since this is the default in Bootstrap*/
+
+
+/*Small devices (landscape phones, 576px and up)*/
+
+@media (min-width: 576px) {
+  #title {
+    font-size: 75px;
+  }
+}
+
+
+/*Medium devices (tablets, 768px and up)*/
+
+@media (min-width: 768px) {
+  #title {
+    font-size: 115px;
+  }
+}
+
+
+/*Large devices (desktops, 992px and up)*/
+
+@media (min-width: 992px) {
+  #title {
+    font-size: 175px;
+  }
+}
+
+
+/*Extra large devices (large desktops, 1200px and up)*/
+
+@media (min-width: 1200px) {
+  #title {
+    font-size: 200px;
+  }
+}
