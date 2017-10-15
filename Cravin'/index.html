@@ -7,15 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" type="text/css" href="assets/css/reset.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+    crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 </head>
 
 <body>
-  <!-- Insert Image of Awning Here Using CSS -->
-  <div id="awning">
-
-    <!-- <div class="dropdown">
+  <!-- <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile
 </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -29,40 +29,111 @@
       </div>
     </div> -->
 
+
+  <div id="loading-screen">
+    <i class="fa fa-spinner fa-spin fa-5x loading-icon"></i>
+  </div>
+
+  <!-- Insert Image of Awning Here Using CSS -->
+  <div id="awning">
+
+  </div>
+
+
+
+  <!-- Wrapper Container will be using JavaScript to alter content and classes -->
+  <div id="splash-screen" class="wrapper">
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
         <h1 class="display-1" id="title"> Cravin' </h1>
       </div>
     </div>
-  </div>
-
-  <!-- Wrapper Container will be using JavaScript to alter content and classes -->
-  <div id="wrapper">
     <!-- Loading Animation to Go Here -->
 
     <!-- Image of Burger Goes Here -->
 
     <img id="burger" src="assets/images/burger.png" class="img-fluid" alt="Responsive image">
 
-    <!-- Login API Goes Here  -->
+  </div>
+  <div id="login-screen" class="wrapper">
+    <div class="jumbotron jumbotron-fluid">
+      <h1 class="text-center"> Sign in to Cravin' </h1>
+    </div>
+    <!-- Loading Animation to Go Here -->
 
+    <!-- Image of Burger Goes Here -->
+    <div class="row justify-content-md-center">
+      <div class="col-sm-10 col-md-8">
+        <img src="assets/images/salad.png" class="img-fluid" alt="Responsive image">
+      </div>
+    </div>
+
+    <br />
+    <button class="btn btn-primary" id="btn-sign-in">
+      Sign in with Google
+    </button>
+
+  </div>
+
+  <div id="craving-select-screen">
+    <div class="jumbotron">
+      <h1 class="text-center">What are you Cravin' today?</h1>
+    </div>
+    <div class="container">
+      <h3>Select your craving.</h3>
+      <div class="row show-cravings justify-content-md-center">
+        <div class="col-sm-6 col-md-4 craving-box burger-craving-box" data-craving-id="168">
+          <div class="craving-check-wrapper">
+            <i class="fa fa-check fa-5x craving-check"></i>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 craving-box taco-craving-box" data-craving-id="997">
+          <div class="craving-check-wrapper">
+            <i class="fa fa-check fa-5x craving-check"></i>
+          </div>
+        </div>
+      </div>
+      <div class="row show-cravings justify-content-md-center">
+        <div class="col-sm-6 col-md-4 craving-box salad-craving-box" data-craving-id="998">
+          <div class="craving-check-wrapper">
+            <i class="fa fa-check fa-5x craving-check"></i>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 craving-box pie-craving-box" data-craving-id="82">
+          <div class="craving-check-wrapper">
+            <i class="fa fa-check fa-5x craving-check"></i>
+          </div>
+        </div>
+      </div>
+      <div class="craving-buttons">
+        <h3>Select how you want it.</h3>
+        <div class="craving-buttons-group">
+          <button id="btn-fast" class="btn btn-display btn-large">Get it fast!</button>
+          <button id="btn-best" class="btn btn-display btn-large">Get the best!</button>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Motto & Copyright Goes Here -->
   <div id="footer">
     <h5>
-     Directing you to the best cravin's in your area!
-   </h5>
+      Directing you to the best cravin's in your area!
+    </h5>
     <h6>
-     Copyright &copy; 2017
-   </h6>
+      Copyright &copy; 2017
+    </h6>
   </div>
 
-  <!-- Optional JavaScript -->
-  <script src="assets/javascript/app.js"></script>
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+    crossorigin="anonymous"></script>
+  <script src="assets/js/app.js"></script>
+
 </body>
 
 </html>

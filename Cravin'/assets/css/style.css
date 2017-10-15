@@ -10,9 +10,13 @@ html, body {
   background-color: red;
   background-size: cover;
   background: linear-gradient(red, black);
+  overflow-x: hidden;
 }
 
+h1 { font-size: 85px; }
+
 .jumbotron {
+  padding-top: 25px;
   background-color: transparent;
 }
 
@@ -32,7 +36,7 @@ html, body {
   font-size: 65px;
 }
 
-#wrapper {
+.wrapper {
   text-align: center;
   margin: 15px;
 }
@@ -41,7 +45,87 @@ html, body {
   text-align: center;
   background-color: transparent;
 }
+#login-screen, #craving-select-screen, #splash-screen  {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  min-height: 85vh;
+  display: none;
+  opacity: 0;
+}
+#splash-screen {
+  display: block;
+  opacity: 1;
+}
+#btn-sign-in {
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+#loading-screen {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,.7);
+  z-index: 9999;
+}
+.loading-icon {
+  color: orange;
+  margin-left: calc(100vw / 2);
+  margin-top: calc((100vh / 2) - 10px);
+}
+.craving-buttons {
+  margin-top: 40px;
+}
+.craving-buttons-group {
+  margin-top: 40px;
+}
+.craving-buttons-group button {
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+.show-cravings {
+  margin: 0 auto;
+}
 
+.craving-box {
+  height: 175px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.craving-check {
+  color: yellow;
+  text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000;
+}
+
+.craving-check-wrapper {
+  display: block;
+  margin-left: 25%;
+  display: none;
+}
+
+.burger-craving-box {
+  background-image: url('../images/burger.png');
+}
+
+.taco-craving-box {
+  background-image: url('../images/taco.png');
+}
+
+.salad-craving-box {
+  background-image: url('../images/salad.png');
+}
+
+.pie-craving-box {
+  background-image: url('../images/pizza.png');
+}
 
 /*Extra small devices (portrait phones, less than 576px)
  No media query since this is the default in Bootstrap*/
@@ -53,6 +137,7 @@ html, body {
   #title {
     font-size: 75px;
   }
+  
 }
 
 
