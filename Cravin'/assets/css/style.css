@@ -86,8 +86,8 @@ h1 { font-size: 85px; }
 }
 .craving-buttons-group button {
   display: block;
-  margin: 0 auto;
-  margin-top: 10px;
+  margin: 10px auto;
+  
 }
 .show-cravings {
   margin: 0 auto;

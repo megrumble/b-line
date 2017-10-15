@@ -185,6 +185,7 @@ $(document).ready(function () {
             $("#btn-find-craving").on('click', function () {
                 if (app.currentCraving === 0) {
                     app.showAlert("No craving", "Please select a craving to continue!");
+                    return;
                 }
                 app.showLoadingScreen();
                 var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=9000`;
