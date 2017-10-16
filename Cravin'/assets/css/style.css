@@ -13,9 +13,13 @@ html, body {
   overflow-x: hidden;
   text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
+
 a { text-shadow: none;}
 h1 { font-size: 85px; }
-
+h2 { font-size: 65px; }
+h3 { font-size: 45px; }
+h4 { font-size: 20px; }
+.row { margin-right: 0; margin-left: 0;}
 .jumbotron {
   padding-top: 25px;
   background-color: transparent;
@@ -48,7 +52,8 @@ h1 { font-size: 85px; }
   background-color: transparent;
   letter-spacing: 5px;
 }
-#login-screen, #craving-select-screen, #splash-screen  {
+#login-screen, #craving-select-screen, #splash-screen,
+#results-screen  {
   position: relative;
   left: 0;
   top: 0;
@@ -79,8 +84,9 @@ h1 { font-size: 85px; }
   z-index: 99999;
 }
 .loading-icon {
+  position: fixed;
   color: orange;
-  margin-left: calc(100vw / 2);
+  margin-left: calc((100vw / 2) - 40px);
   margin-top: calc((100vh / 2) - 10px);
 }
 .craving-buttons {
@@ -97,13 +103,27 @@ h1 { font-size: 85px; }
 .show-cravings {
   margin: 0 auto;
 }
-
+.results-box {
+  border-radius: 10px;
+  background-color: darkred;
+  box-shadow: inset 0 0 10px #000;
+  padding: 20px;
+  margin-top: 15px;
+  color: black;
+}
+.results-image {
+  max-width: 300px;
+  height: auto;
+  float: left;
+  margin-right: 10px;
+}
 .craving-box {
   height: 175px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
   z-index: 10;
+  margin-top: 20px;
 }
 
 .craving-check {
@@ -138,6 +158,10 @@ h1 { font-size: 85px; }
 
 
 /*Small devices (landscape phones, 576px and up)*/
+
+.restaurant-info {
+  text-align: left;
+}
 
 @media (min-width: 576px) {
   #title {
