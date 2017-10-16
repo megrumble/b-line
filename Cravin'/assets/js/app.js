@@ -66,18 +66,15 @@ function getDatabaseLocation(uid) {
 // Thank you StackOverflow.
 // Finds the distance between two locations, used for sort.
 function distance(lat1, lon1, lat2, lon2) {
-    var radlat1 = Math.PI * lat1 / 180
-    var radlat2 = Math.PI * lat2 / 180
-    var radlon1 = Math.PI * lon1 / 180
-    var radlon2 = Math.PI * lon2 / 180
-    var theta = lon1 - lon2
-    var radtheta = Math.PI * theta / 180
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    dist = Math.acos(dist)
-    dist = dist * 180 / Math.PI
-    dist = dist * 60 * 1.1515
-    return dist
+    var p = 0.017453292519943295; // Math.PI / 180
+    var c = Math.cos;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+    var milesAway = (12742 * Math.asin(Math.sqrt(a))) / 1.609344;
+    return (milesAway).toFixed(1); // 2 * R; R = 6371 km
 }
+
 
 firebase.initializeApp(config);
 var database = firebase.database();
@@ -103,10 +100,10 @@ $(document).ready(function () {
         },
         sortByQuality: function (a, b) {
             if (a.aggregate_rating < b.aggregate_rating) {
-                return -1;
+                return 1;
             }
             if (a.aggregate_rating > b.aggregate_rating) {
-                return 1;
+                return -1;
             }
             return 0;
         },
@@ -157,21 +154,63 @@ $(document).ready(function () {
             $("#alert-modal").modal();
         },
         showLoadingScreen: function () {
-            $("#loading-screen").css("display", "block");
+            var body = document.body;
+            var html = document.documentElement;
+            // Since our screens are continually changing the height of the DOM, we find the absolute highest height at the moment.
+            var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+            $("#loading-screen").css({
+                "height": height,
+                "display": "block"
+            });
         },
         hideLoadingScreen: function () {
             $("#loading-screen").css("display", "none");
         },
         switchScreens: function (closeId, openId, callback) {
-            $(closeId).animate({ opacity: 0 }, 500, function () {
-                $(closeId).css({ "display": "none", "height": 0, "z-index" : "0" });
-                $(openId).css({ "display": "block", "min-height": "85vh", "z-index" : "9" });
-                
-                $(openId).animate({ opacity: 1 }, 500, function () {
+            $(closeId).animate({
+                opacity: 0
+            }, 500, function () {
+                $(closeId).css({
+                    "display": "none",
+                    "height": 0,
+                    "z-index": "0"
+                });
+                $(openId).css({
+                    "display": "block",
+                    "min-height": "85vh",
+                    "z-index": "9"
+                });
+
+                $(openId).animate({
+                    opacity: 1
+                }, 500, function () {
                     if (callback) {
                         callback();
                     }
                 });
+            });
+        },
+        populateResults: function () {
+            app.restaurantResults.forEach(function (currentValue, index) {
+                console.log(currentValue.featured_image);
+                var resultsBox = $("#results");
+                var resultsDisplay = $(`
+                    <div class="row justify-content-center">    
+                        <div class="col-12">
+                            <div class="results-box first-result clearfix">
+                                <h3 class="restaurant-name">${ currentValue.name }</h3>
+                                <img class="results-image img-fluid img-thumbnail" src="${ currentValue.thumb }" />
+                                <div class="restaurant-info">
+                                    <h4>Average Rating: ${ currentValue.aggregate_rating }</h4>
+                                    <h4>Address: ${ currentValue.address }</h4>
+                                    <h4>About ${ currentValue.distance } miles away.</h4>
+                                </div>
+                            </div>
+                       </div>
+                       
+                    </div>`
+                    );
+                resultsBox.append(resultsDisplay);
             });
         },
         findCraving(type) {
@@ -180,27 +219,32 @@ $(document).ready(function () {
                 return;
             }
             app.showLoadingScreen();
-            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=9000`;
+            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=15000&count=3`;
             app.restaurantResults.length = 0;
 
             app.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
-
-                response.restaurants.forEach(function (currentValue) {
+                console.log(response);
+                response.restaurants.forEach(function (currentValue, index) {
                     var rest = currentValue.restaurant;
                     var newRestaurant = new Restaurant(rest.id, rest.name, rest.location.address, rest.location.latitude, rest.location.longitude,
                         rest.thumb, rest.price_range, rest.average_cost_for_two, rest.featured_image, rest.user_rating.aggregate_rating);
                     newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
-
-
                     app.restaurantResults.push(newRestaurant);
+
+                    if (index === response.restaurants.length - 1) {
+                        if (type === "fast") {
+                            app.restaurantResults.sort(app.sortByDistance);
+                        } else {
+                            app.restaurantResults.sort(app.sortByQuality);
+                        }
+
+                    }
                 });
                 console.log(app.restaurantResults);
-                if(type === "fast") {
-                    app.restaurantResults.sort(app.sortByDistance);
-                } else {
-                    app.restaurantResults.sort(app.sortByQuality);
-                }
+                app.populateResults();
                 app.hideLoadingScreen();
+
+                app.switchScreens("#craving-select-screen", "#results-screen");
             })
 
         },
@@ -213,9 +257,15 @@ $(document).ready(function () {
                     // An error happened.
                 });
             });
-            
-            $("#btn-fast").on('click', function(e) { e.preventDefault(); app.findCraving("fast") });
-            $("#btn-best").on('click', function(e) { e.preventDefault(); app.findCraving("best") });
+
+            $("#btn-fast").on('click', function (e) {
+                e.preventDefault();
+                app.findCraving("fast")
+            });
+            $("#btn-best").on('click', function (e) {
+                e.preventDefault();
+                app.findCraving("best")
+            });
 
             $("#btn-sign-in").on("click", function () {
                 firebase.auth().signInWithRedirect(provider);
