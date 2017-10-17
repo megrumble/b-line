@@ -1,3 +1,21 @@
+/*
+    Cravin' App
+    Eva King
+    Meg Rumble
+    Colin Shifley
+    Dan Orlovsky
+
+    UNCC Coding Bootcamp
+
+    APIs used:
+        Zomato
+        Google Geolocate (as a backup to HTML5)
+
+    Persistent Storage:
+        Firebase
+*/
+'use strict';
+// FIREBASE CONFIG
 var config = {
     apiKey: "AIzaSyAfZPBHzrGWnwIrnZTZrw8LBet6cKYPIoM",
     authDomain: "codersbay-a751d.firebaseapp.com",
@@ -6,11 +24,16 @@ var config = {
     storageBucket: "codersbay-a751d.appspot.com",
     messagingSenderId: "1033281453498"
 };
+
 firebase.initializeApp(config);
 var database = firebase.database();
 
+// FIREBASE AUthorization Provider
+var provider = new firebase.auth.GoogleAuthProvider();
 
 
+
+// User object
 function User(uid, name, email, photoURL) {
     this.uid = uid;
     this.name = name;
@@ -25,6 +48,7 @@ function User(uid, name, email, photoURL) {
     this.lastRestaurantId = "";
 }
 
+// Restaurant object
 function Restaurant(id, name, address, lat, lon, thumb, price_range, average_cost, featured_image, aggregate_rating) {
     this.id = id;
     this.name = name;
@@ -44,7 +68,7 @@ function Restaurant(id, name, address, lat, lon, thumb, price_range, average_cos
     this.userReviews = [];
 }
 
-
+// Object to hold API keys
 var apiKeys = {
     mapsEmbed: "AIzaSyDqf6wEb0fLt7Wf56hzb84dYQ8OBte-5dE",
     zomato: {
@@ -60,17 +84,21 @@ var apiKeys = {
 
 };
 
+// URLs stored for the APIs used.
 var apiUrls = {
     zomatoBase: "https://developers.zomato.com/api/v2.1/",
     yelpBestMatch: "https://api.yelp.com/v3/businesses/matches/best",
+    // Google direction link, not to API.
     googleDirsUrl: "https://www.google.com/maps/dir/",
     googleGeoLocation: `https://www.googleapis.com/geolocation/v1/geolocate?key=${ apiKeys.mapsEmbed}`,
 };
 
+// Returns where we store users in the DB
 function getUsrDataLoc(uid) {
     return "users/" + uid;
 }
 
+// Returns where we store restaurants in the DB
 function getRestDataLoc(rid) {
     return "restaurants/" + rid;
 }
@@ -88,20 +116,22 @@ function distance(lat1, lon1, lat2, lon2) {
     return (milesAway).toFixed(1); // 2 * R; R = 6371 km
 }
 
-
-var provider = new firebase.auth.GoogleAuthProvider();
-
-
 $(document).ready(function () {
+    // App instance
     var app = {
+        // Store screens for back-button functionality
         lastScreens: [],
+        // Stores the ID of our current screen
         currentScreen: "",
+        // Stores our Latitude and Longitude coordinates
         latLong: [],
+        // Stores a list of returned restaurants
         restaurantResults: [],
+        // Our current user object
         currentUser: null,
+        // Our current craving identitfier
         currentCraving: 0,
-        routeType: "",
-        selectedRestaurant: null,
+        // Function to sort restaurant array by distance
         sortByDistance: function (a, b) {
             if (a.distance < b.distance) {
                 return -1;
@@ -111,6 +141,7 @@ $(document).ready(function () {
             }
             return 0;
         },
+        // Function to sort restaurant array by quality
         sortByQuality: function (a, b) {
             if (a.aggregate_rating < b.aggregate_rating) {
                 return 1;
@@ -120,15 +151,7 @@ $(document).ready(function () {
             }
             return 0;
         },
-        getRestaurantDistances: function () {
-            if (app.restaurantResults.length < 0) {
-                return;
-            }
-            var distances = [];
-            app.restaurantResults.forEach(function (currentValue) {
-
-            });
-        },
+        // Generic function to make Ajax call
         callApi: function (type, url, headers, callback) {
             $.ajax({
                 type: type,
@@ -139,14 +162,13 @@ $(document).ready(function () {
                 }
             });
         },
-
-        showCravings: function () {
-
-        },
+        // Calls the Zomato API to get the user's City Id
         getCity: function () {
+            // Builds the url to call
             var callUrl = `${ apiUrls.zomatoBase }cities?lat=${ this.latLong[0] }&lon=${ this.latLong[1] }`;
+            // Calls the API
             this.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
-
+                // Parses the results, stores them in the Firebase storage bucket
                 app.currentUser.currentCityId = response.location_suggestions[0].id;
                 app.currentUser.currentCity = response.location_suggestions[0].name;
                 app.currentUser.currentState = response.location_suggestions[0].state_code;
@@ -157,12 +179,28 @@ $(document).ready(function () {
                 });
             });
         },
-        showAlert(title, body) {
+        // Shows the Modal alert dialog
+        showAlert: function (title, body) {
 
             $("#alert-title").text(title);
             $("#alert-body").text(body);
             $("#alert-modal").modal();
         },
+        // Shows the modal Yes/No dialog
+        showYesNo: function (title, body) {
+            $("#btn-yes").prop("disabled", false);
+            $("#btn-no").prop("disabled", false);
+            $("#yes-no-title").text(title);
+            $("#yes-no-body").text(body);
+            $("#yes-no-modal").modal();
+        },
+        // Hides the modal Yes/No Dialog
+        hideYesNo: function () {
+            $("#btn-yes").prop("disabled", true);
+            $("#btn-no").prop("disabled", true);
+            $("#yes-no-modal").modal('hide');
+        },
+        // Displays our "loading" indicator that displays a font-awesome spinner
         showLoadingScreen: function () {
             var body = document.body;
             var html = document.documentElement;
@@ -173,14 +211,20 @@ $(document).ready(function () {
                 "display": "block"
             });
         },
+        // Hides the loading screen
         hideLoadingScreen: function () {
             $("#loading-screen").css("display", "none");
         },
+        // Fades from one screen to the next
         switchScreens: function (closeId, openId, storeScreen, callback) {
+            // Grabs the new currentScreen (used for back button functionality).
             app.currentScreen = openId;
+            // Push the screen we are leaving into the lastScreens array should we be prompted.  We don't do this if the user hits the "back button"
+            // or from the splash screen.
             if (storeScreen === true) {
                 app.lastScreens.push(closeId);
             }
+            // Animate the closing, and change the CSS
             $(closeId).animate({
                 opacity: 0
             }, 500, function () {
@@ -189,6 +233,7 @@ $(document).ready(function () {
                     "height": 0,
                     "z-index": "0"
                 });
+                // Change the opening screens CSS and animate the opening.
                 $(openId).css({
                     "display": "block",
                     "min-height": "85vh",
@@ -204,10 +249,12 @@ $(document).ready(function () {
                 });
             });
         },
+        // Loops through our restaurantResults array to get more values.
         populateResults: function () {
+            var resultsBox = $("#results");
+            resultsBox.empty();
+            // Cycles through all restaurants
             app.restaurantResults.forEach(function (currentValue, index) {
-                console.log(currentValue.featured_image);
-                var resultsBox = $("#results");
                 var resultsDisplay = $(`
                     <div class="row justify-content-center">    
                         <div class="col-12">
@@ -229,12 +276,15 @@ $(document).ready(function () {
             });
         },
         findCraving(type) {
+            // If they've selected no craving, alert and bail.
             if (app.currentCraving === 0) {
                 app.showAlert("No craving", "Please select a craving to continue!");
                 return;
             }
+            // Opens the loading screen
             app.showLoadingScreen();
-            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=15000&count=3`;
+            // Bu
+            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=3000&count=3`;
             app.restaurantResults.length = 0;
 
             app.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
@@ -246,7 +296,7 @@ $(document).ready(function () {
                     newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
                     app.restaurantResults.push(newRestaurant);
 
-                    if (index === response.restaurants.length - 1) {
+                    if (index === response.restaurants.length) {
                         if (type === "fast") {
                             app.restaurantResults.sort(app.sortByDistance);
                         } else {
@@ -255,10 +305,8 @@ $(document).ready(function () {
 
                     }
                 });
-                console.log(app.restaurantResults);
                 app.populateResults();
                 app.hideLoadingScreen();
-
                 app.switchScreens("#craving-select-screen", "#results-screen", true);
             })
 
@@ -267,16 +315,23 @@ $(document).ready(function () {
             var restaurant = app.restaurantResults[idx];
             var dbRestLoc = getRestDataLoc(restaurant.id);
             var dbUsrLoc = getUsrDataLoc(app.currentUser.uid);
-
-            database.ref(dbRestLoc).once("value", function (snapshot) {
-                var restData = snapshot.val();
-                if (!restData) {
-                    database.ref(dbRestLoc).set(restaurant);
+            database.ref(dbUsrLoc).once("value", function (usrSnap) {
+                var user = usrSnap.val();    
+                database.ref(dbRestLoc).once("value", function (snapshot) {
+                    var restData = snapshot.val();
+                    if (!restData) {
+                        database.ref(dbRestLoc).set(restaurant);
+                    }
+                });
+                user.userHasEaten = true;
+                user.lastRestaurantId = restaurant.id;
+                if(!user.restaurants) {
+                    user.restaurants = [];
                 }
-            });
-            database.ref(dbUsrLoc).update({
-                userHasEaten: true,
-                lastRestaurantId: restaurant.id
+                if(user.restaurants.indexOf(restaurant.id) === -1) {
+                    user.restaurants.push(restaurant.id);
+                }
+                database.ref(dbUsrLoc).update(user);
             });
         },
         eventListeners: function () {
@@ -315,6 +370,14 @@ $(document).ready(function () {
                 app.switchScreens(app.currentScreen, lastScreen, false);
             });
 
+            $("#btn-no").on("click", function (e) {
+                database.ref(getUsrDataLoc(app.currentUser.uid)).update({
+                    userHasEaten: false,
+                    lastRestaurantId: "",
+                });
+                app.hideYesNo();
+            })
+
             $("#btn-sign-in").on("click", function () {
                 firebase.auth().signInWithRedirect(provider);
             });
@@ -346,8 +409,7 @@ $(document).ready(function () {
             firebase.auth().onAuthStateChanged(function (user) {
 
                 if (user) {
-                    databaseLocation = getUsrDataLoc(user.uid);
-                    app.currentUser = user;
+                    //app.currentUser = user;
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(function (position) {
                             app.latLong = [position.coords.latitude, position.coords.longitude];
@@ -359,8 +421,15 @@ $(document).ready(function () {
                             app.latLong = [response.location.lat, response.location.lng];
                         });
                     };
-                    database.ref(getUsrDataLoc(user.uid)).once("value", function (snapshot) {
-                        console.log(snapshot.val().userHasEaten);
+                    database.ref(getUsrDataLoc(user.uid)).once("value", function (usrSnap) {
+                        app.currentUser = usrSnap.val();
+                        if (app.currentUser.userHasEaten) {
+                            database.ref(getRestDataLoc(userData.lastRestaurantId)).once("value", function (restSnap) {
+                                var restData = restSnap.val();
+                                app.showYesNo('Welcome Back, ' + user.displayName,
+                                    `You recently satisfied a craving at ${ restData.name }!  Would you like to leave a review about your experience?`);
+                            });
+                        }
                     });
                     // GO TO THE NEXT PAGE
                     app.switchScreens("#login-screen", "#craving-select-screen", true);
