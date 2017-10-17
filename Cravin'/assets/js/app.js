@@ -222,33 +222,41 @@ $(document).ready(function () {
             // Push the screen we are leaving into the lastScreens array should we be prompted.  We don't do this if the user hits the "back button"
             // or from the splash screen.
             if (storeScreen === true) {
-                window.history.pushState({ state: window.history.length}, "", closeId);
+                window.history.pushState({
+                    state: window.history.length
+                }, "", closeId);
                 app.lastScreens.push(closeId);
             }
             // Animate the closing, and change the CSS
             $(closeId).animate({
                 opacity: 0
             }, 500, function () {
+                $(openId).css({
+                    "display": "block",
+                    "min-height": "85vh",
+                    "height": "auto",
+                    "z-index": "9"
+                });
                 $(closeId).css({
                     "display": "none",
                     "height": 0,
                     "z-index": "0"
                 });
-                // Change the opening screens CSS and animate the opening.
-                $(openId).css({
-                    "display": "block",
-                    "min-height": "85vh",
-                    "z-index": "9"
-                });
-
+                $("#footer").css({"display" : "none"});
+                $("#footer").css({"display" : "block"});
                 $(openId).animate({
                     opacity: 1
                 }, 500, function () {
+                    $('html, body').animate({ scrollTop: 0 });
                     if (callback) {
                         callback();
                     }
                 });
             });
+
+            // Change the opening screens CSS and animate the opening.
+
+
         },
         // Loops through our restaurantResults array to get more values.
         populateResults: function () {
@@ -256,6 +264,10 @@ $(document).ready(function () {
             resultsBox.empty();
             // Cycles through all restaurants
             app.restaurantResults.forEach(function (currentValue, index) {
+                var priceRange = "";
+                for (var i = 0; i < Math.floor(currentValue.price_range); i++) {
+                    priceRange += "$";
+                }
                 var resultsDisplay = $(`
                     <div class="row justify-content-center">    
                         <div class="col-12">
@@ -264,6 +276,7 @@ $(document).ready(function () {
                                 <img class="results-image img-fluid img-thumbnail" src="${ currentValue.thumb }" />
                                 <div class="restaurant-info">
                                     <h4>Average Rating: ${ currentValue.aggregate_rating }</h4>
+                                    <h4>Price Range: ${ priceRange }</h4>
                                     <h4>Address: ${ currentValue.address }</h4>
                                     <h4>About ${ currentValue.distance } miles away.</h4>
                                     <h5>
@@ -294,6 +307,7 @@ $(document).ready(function () {
                     var rest = currentValue.restaurant;
                     var newRestaurant = new Restaurant(rest.id, rest.name, rest.location.address, rest.location.latitude, rest.location.longitude,
                         rest.thumb, rest.price_range, rest.average_cost_for_two, rest.featured_image, rest.user_rating.aggregate_rating);
+                    
                     newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
                     app.restaurantResults.push(newRestaurant);
 
@@ -312,12 +326,12 @@ $(document).ready(function () {
             })
 
         },
-        addRestuarantToDb: function (idx, callback) {
+        addRestuarantToDb: function (idx) {
             var restaurant = app.restaurantResults[idx];
             var dbRestLoc = getRestDataLoc(restaurant.id);
             var dbUsrLoc = getUsrDataLoc(app.currentUser.uid);
             database.ref(dbUsrLoc).once("value", function (usrSnap) {
-                var user = usrSnap.val();    
+                var user = usrSnap.val();
                 database.ref(dbRestLoc).once("value", function (snapshot) {
                     var restData = snapshot.val();
                     if (!restData) {
@@ -326,21 +340,22 @@ $(document).ready(function () {
                 });
                 user.userHasEaten = true;
                 user.lastRestaurantId = restaurant.id;
-                if(!user.restaurants) {
+                if (!user.restaurants) {
                     user.restaurants = [];
                 }
-                if(user.restaurants.indexOf(restaurant.id) === -1) {
+                if (user.restaurants.indexOf(restaurant.id) === -1) {
                     user.restaurants.push(restaurant.id);
                 }
                 database.ref(dbUsrLoc).update(user);
             });
         },
-        backButton: function() {
+        backButton: function () {
             if (app.lastScreens.length < 0) {
+                window.history.pop();
                 return;
             };
             // Grab the value before we pop it.
-            var lastScreen = app.lastScreens[app.lastScreens.length-1];
+            var lastScreen = app.lastScreens[app.lastScreens.length - 1];
             // pop the last screen from our array.
             app.lastScreens.pop();
             // Transition the screens.
@@ -348,7 +363,7 @@ $(document).ready(function () {
 
         },
         eventListeners: function () {
-            window.onpopstate = function(event) {
+            window.onpopstate = function (event) {
                 app.backButton();
             };
             $("#btn-sign-out").on("click", function () {
@@ -360,10 +375,8 @@ $(document).ready(function () {
                 });
             });
             $(document).on("click", ".go-to-restaurant", function (e) {
-                e.preventDefault();
-                app.addRestuarantToDb(parseInt($(this).attr("data-index")), function () {
-                    window.open($(this).attr("href"));
-                });
+                app.addRestuarantToDb(parseInt($(this).attr("data-index")));
+
             });
             $("#btn-fast").on('click', function (e) {
                 e.preventDefault();
@@ -373,7 +386,10 @@ $(document).ready(function () {
                 e.preventDefault();
                 app.findCraving("best")
             });
-            $("#btn-back").on("click", app.backButton);
+            $("#btn-back").on("click", function(e) {
+                e.preventDefault();
+                window.history.back();
+            });
 
             $("#btn-no").on("click", function (e) {
                 database.ref(getUsrDataLoc(app.currentUser.uid)).update({
