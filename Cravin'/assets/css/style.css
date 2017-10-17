@@ -42,14 +42,44 @@ h4 {
   margin-left: 0;
 }
 
+
+a { text-shadow: none;}
+h1 { font-size: 85px; }
+h2 { font-size: 65px; }
+h3 { font-size: 45px; }
+h4 { font-size: 20px; }
+h6 { margin-left: 3px;
+  display: inline-block;
+ }
+ h1, h2, h3 {
+  color: rgb(254, 252, 62);
+  text-shadow: none;
+}
+
+.row { margin-right: 0; margin-left: 0;}
+
 .jumbotron {
   padding-top: 25px;
   background-color: transparent;
 }
 
-.navy {
-  color: #fefc3e;
+nav {
   background-color: #000;
+}
+
+a#btn-best.btn.btn-primary.btn-large {
+  color: rgb(254, 252, 62);
+  background-color: rgba(0, 0, 0, 0.5)
+  border-color: none;
+}
+
+a#btn-best.btn.btn-primary.btn-large:hover {
+  background-color: rgba(150, 150, 150, 0.5)
+}
+
+.navbar-brand {
+  color: rgb(254, 252, 62);
+  margin-left: 3px;
 }
 
 #awning {
