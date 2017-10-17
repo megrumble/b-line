@@ -32,7 +32,10 @@ var database = firebase.database();
 var provider = new firebase.auth.GoogleAuthProvider();
 
 
-
+function review(uid, starRating, text) {
+    this.uid = uid;
+    this.text = text;
+};
 // User object
 function User(uid, name, email, photoURL) {
     this.uid = uid;
@@ -46,7 +49,7 @@ function User(uid, name, email, photoURL) {
     this.restaurants = [];
     this.userHasEaten = false;
     this.lastRestaurantId = "";
-}
+};
 
 // Restaurant object
 function Restaurant(id, name, address, lat, lon, thumb, price_range, average_cost, featured_image, aggregate_rating) {
@@ -133,6 +136,7 @@ $(document).ready(function () {
         currentCraving: 0,
         // Function to sort restaurant array by distance
         sortByDistance: function (a, b) {
+            console.log("Sort!");
             if (a.distance < b.distance) {
                 return -1;
             }
@@ -144,10 +148,10 @@ $(document).ready(function () {
         // Function to sort restaurant array by quality
         sortByQuality: function (a, b) {
             if (a.aggregate_rating < b.aggregate_rating) {
-                return 1;
+                return -1;
             }
             if (a.aggregate_rating > b.aggregate_rating) {
-                return -1;
+                return 1;
             }
             return 0;
         },
@@ -263,31 +267,33 @@ $(document).ready(function () {
             var resultsBox = $("#results");
             resultsBox.empty();
             // Cycles through all restaurants
-            app.restaurantResults.forEach(function (currentValue, index) {
+            for(var i = 0; i < 3; i++) {
                 var priceRange = "";
-                for (var i = 0; i < Math.floor(currentValue.price_range); i++) {
+                for (var x = 0; x < Math.floor(app.restaurantResults[i].price_range); x++) {
                     priceRange += "$";
                 }
                 var resultsDisplay = $(`
                     <div class="row justify-content-center">    
                         <div class="col-12">
                             <div class="results-box first-result clearfix">
-                                <h3 class="restaurant-name">${ currentValue.name }</h3>
-                                <img class="results-image img-fluid img-thumbnail" src="${ currentValue.thumb }" />
+                                <h3 class="restaurant-name">${ app.restaurantResults[i].name }</h3>
+                                <img class="results-image img-fluid img-thumbnail" src="${ app.restaurantResults[i].thumb }" />
                                 <div class="restaurant-info">
-                                    <h4>Average Rating: ${ currentValue.aggregate_rating }</h4>
-                                    <h4>Price Range: ${ priceRange }</h4>
-                                    <h4>Address: ${ currentValue.address }</h4>
-                                    <h4>About ${ currentValue.distance } miles away.</h4>
+                                    <h4>Average Rating: ${ app.restaurantResults[i].aggregate_rating }</h4>
+                                    <h4>Price Range: <span style="color: green;">${ priceRange }</span></h4>
+                                    <h4>Address: ${ app.restaurantResults[i].address }</h4>
+                                    <h4>About ${ app.restaurantResults[i].distance } miles away.</h4>
                                     <h5>
-                                        <a href="${ apiUrls.googleDirsUrl }${app.latLong[0]},${app.latLong[1]}/${currentValue.googleAddress}" class="go-to-restaurant" data-index="${ index}">Let's Go!</a>
+                                        <a href="${ apiUrls.googleDirsUrl }${app.latLong[0]},${app.latLong[1]}/${app.restaurantResults[i].googleAddress}" 
+                                        class="go-to-restaurant" data-index="${ i }">Let's Go!</a>
                                     </h5>
                                 </div>
                             </div>
                        </div>                       
                     </div>`);
                 resultsBox.append(resultsDisplay);
-            });
+                
+            };
         },
         findCraving(type) {
             // If they've selected no craving, alert and bail.
@@ -298,7 +304,7 @@ $(document).ready(function () {
             // Opens the loading screen
             app.showLoadingScreen();
             // Bu
-            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=3000&count=3`;
+            var callUrl = `${ apiUrls.zomatoBase }/search?lat=${ app.latLong[0] }&lon=${ app.latLong[1] }&cuisines=${ app.currentCraving }&radius=3000&count=20`;
             app.restaurantResults.length = 0;
 
             app.callApi("get", callUrl, apiKeys.zomato.header, function (response) {
@@ -308,14 +314,17 @@ $(document).ready(function () {
                     var newRestaurant = new Restaurant(rest.id, rest.name, rest.location.address, rest.location.latitude, rest.location.longitude,
                         rest.thumb, rest.price_range, rest.average_cost_for_two, rest.featured_image, rest.user_rating.aggregate_rating);
                     
-                    newRestaurant.distance = distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon);
+                    newRestaurant.distance = parseFloat(distance(app.latLong[0], app.latLong[1], newRestaurant.lat, newRestaurant.lon));
                     app.restaurantResults.push(newRestaurant);
-
-                    if (index === response.restaurants.length) {
+                    console.log(index + " : " + response.restaurants.length);
+                    if (index === response.restaurants.length - 1) {
                         if (type === "fast") {
+                            console.log(app.restaurantResults);
                             app.restaurantResults.sort(app.sortByDistance);
+                            console.log(app.restaurantResults);
                         } else {
                             app.restaurantResults.sort(app.sortByQuality);
+                            console.log(app.restaurantResults);
                         }
 
                     }
