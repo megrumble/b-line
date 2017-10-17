@@ -4,6 +4,6 @@ var app = express()
 
 app.use(express.static(__dirname))
 
-app.listen(5000, function () {
-    console.log("Open your browser and navigate to http://localhost:5000")
+app.listen(5000, function() {
+  console.log("Open your browser and navigate to http://localhost:5000")
 })

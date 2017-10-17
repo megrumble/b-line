@@ -1,10 +1,10 @@
 var config = {
-        apiKey: "AIzaSyAfZPBHzrGWnwIrnZTZrw8LBet6cKYPIoM",
-        authDomain: "codersbay-a751d.firebaseapp.com",
-        databaseURL: "https://codersbay-a751d.firebaseio.com",
-        projectId: "codersbay-a751d",
-        storageBucket: "codersbay-a751d.appspot.com",
-        messagingSenderId: "1033281453498"
+    apiKey: "AIzaSyAfZPBHzrGWnwIrnZTZrw8LBet6cKYPIoM",
+    authDomain: "codersbay-a751d.firebaseapp.com",
+    databaseURL: "https://codersbay-a751d.firebaseio.com",
+    projectId: "codersbay-a751d",
+    storageBucket: "codersbay-a751d.appspot.com",
+    messagingSenderId: "1033281453498"
 };
 firebase.initializeApp(config);
 var database = firebase.database();
@@ -52,10 +52,11 @@ var apiKeys = {
             "user-key": "029229483ea9d14f003cd7257516abde"
         },
     },
-    yelp: {
-        clientId: "dE4ardVf7tro8HdvDguNuA",
-        clientSecret: "wdaKsDjLnqLqtp49StvQFag2fhR9p2Rvv5xTkTNtYjX6TyAzLpExHue5xEnpqYkn"
-    }
+ 
+  yelp: {
+    clientId: "dE4ardVf7tro8HdvDguNuA",
+    clientSecret: "wdaKsDjLnqLqtp49StvQFag2fhR9p2Rvv5xTkTNtYjX6TyAzLpExHue5xEnpqYkn"
+  }
 
 };
 
@@ -78,17 +79,18 @@ function getRestDataLoc(rid) {
 // Thank you StackOverflow.
 // Finds the distance between two locations, used for sort.
 function distance(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295; // Math.PI / 180
-    var c = Math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) *
-        (1 - c((lon2 - lon1) * p)) / 2;
-    var milesAway = (12742 * Math.asin(Math.sqrt(a))) / 1.609344;
-    return (milesAway).toFixed(1); // 2 * R; R = 6371 km
+  var p = 0.017453292519943295; // Math.PI / 180
+  var c = Math.cos;
+  var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+    c(lat1 * p) * c(lat2 * p) *
+    (1 - c((lon2 - lon1) * p)) / 2;
+  var milesAway = (12742 * Math.asin(Math.sqrt(a))) / 1.609344;
+  return (milesAway).toFixed(1); // 2 * R; R = 6371 km
 }
 
 
 var provider = new firebase.auth.GoogleAuthProvider();
+
 
 $(document).ready(function () {
     var app = {
@@ -221,8 +223,7 @@ $(document).ready(function () {
                                     </h5>
                                 </div>
                             </div>
-                       </div>
-                       
+                       </div>                       
                     </div>`);
                 resultsBox.append(resultsDisplay);
             });
@@ -379,9 +380,4 @@ $(document).ready(function () {
     if (!("geolocation" in navigator)) {
         // GEOLOCATION IS UNAVAILABLE, CAN'T USE THE APP.
     }
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 });
