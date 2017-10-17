@@ -1,6 +1,8 @@
 @font-face {
   font-family: 'Heavitas';
-  src: url('../fonts/heavitas-webfont.woff2') format('woff2'), url('../fonts/heavitas-webfont.woff') format('woff'), url('../fonts/Heavitas.ttf') format('woff');
+  src: url('../fonts/heavitas-webfont.woff2') format('woff2'), 
+    url('../fonts/heavitas-webfont.woff') format('woff'), 
+    url('../fonts/Heavitas.ttf') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -8,47 +10,31 @@
 html, body {
   min-height: 100vh;
   background-repeat: no-repeat;
-  font-family: Heavitas;
+  font-family: Heavitas, impact, helvetica;
   background-color: red;
   background-size: cover;
   background: linear-gradient(red, black);
   overflow-x: hidden;
-  text-shadow: -1px -1px 0 #f70, 1px -1px 0 #f70, -1px 1px 0 #f70, 1px 1px 0 #f70;
+  /*text-shadow: -1px -1px 0 #f70, 1px -1px 0 #f70, -1px 1px 0 #f70, 1px 1px 0 #f70;*/
+  text-shadow: -1px 0 yellow, 0 1px yellow, 1px 0 yellow, 0 -1px yellow;
 }
 
 
-a {
+
+  
+
+
+a { 
+  text-shadow: none;
   color: black;
-  }
-
-h1 {
-  font-size: 85px;
 }
-
-h2 {
-  font-size: 65px;
-}
-
-h3 {
-  font-size: 45px;
-}
-
-h4 {
-  font-size: 20px;
-}
-
-.row {
-  margin-right: 0;
-  margin-left: 0;
-}
-
-
-a { text-shadow: none;}
-h1 { font-size: 85px; }
-h2 { font-size: 65px; }
+h1 { font-size: 65px; }
+h2 { font-size: 55px; }
 h3 { font-size: 45px; }
 h4 { font-size: 20px; }
-h6 { margin-left: 3px;
+h6 { 
+  font-size: 20px;
+  margin-left: 3px;
   display: inline-block;
  }
  h1, h2, h3 {
@@ -56,25 +42,33 @@ h6 { margin-left: 3px;
   text-shadow: none;
 }
 
-.row { margin-right: 0; margin-left: 0;}
+.row { 
+  margin-right: 0; margin-left: 0;
+}
 
 .jumbotron {
-  padding-top: 25px;
+  padding-top: 20px;
+  padding-bottom: 34px;
   background-color: transparent;
+  margin: 0px;
 }
 
 nav {
   background-color: #000;
 }
 
-a#btn-best.btn.btn-primary.btn-large {
+
+
+#btn-best {
   color: rgb(254, 252, 62);
-  background-color: rgba(0, 0, 0, 0.5)
-  border-color: none;
 }
 
-a#btn-best.btn.btn-primary.btn-large:hover {
-  background-color: rgba(150, 150, 150, 0.5)
+#btn-fast {
+  color: rgb(254, 252, 62);
+}
+
+#navbtn {
+  color: black;
 }
 
 .navbar-brand {
@@ -151,11 +145,12 @@ a#btn-best.btn.btn-primary.btn-large:hover {
 }
 
 .craving-buttons {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .craving-buttons-group {
-  margin-top: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .craving-buttons-group a {
