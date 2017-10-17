@@ -222,6 +222,7 @@ $(document).ready(function () {
             // Push the screen we are leaving into the lastScreens array should we be prompted.  We don't do this if the user hits the "back button"
             // or from the splash screen.
             if (storeScreen === true) {
+                window.history.pushState({ state: window.history.length}, "", closeId);
                 app.lastScreens.push(closeId);
             }
             // Animate the closing, and change the CSS
@@ -334,7 +335,22 @@ $(document).ready(function () {
                 database.ref(dbUsrLoc).update(user);
             });
         },
+        backButton: function() {
+            if (app.lastScreens.length < 0) {
+                return;
+            };
+            // Grab the value before we pop it.
+            var lastScreen = app.lastScreens[app.lastScreens.length-1];
+            // pop the last screen from our array.
+            app.lastScreens.pop();
+            // Transition the screens.
+            app.switchScreens(app.currentScreen, lastScreen, false);
+
+        },
         eventListeners: function () {
+            window.onpopstate = function(event) {
+                app.backButton();
+            };
             $("#btn-sign-out").on("click", function () {
                 firebase.auth().signOut().then(function () {
                     $("#btn-sign-in").css("display", "block");
@@ -357,18 +373,7 @@ $(document).ready(function () {
                 e.preventDefault();
                 app.findCraving("best")
             });
-            $("#btn-back").on("click", function () {
-                // Check if we have a last screen stored
-                if (app.lastScreens.length < 0) {
-                    return;
-                };
-                // Grab the value before we pop it.
-                var lastScreen = app.lastScreens[app.lastScreens.length];
-                // pop the last screen from our array.
-                app.lastScreens.pop();
-                // Transition the screens.
-                app.switchScreens(app.currentScreen, lastScreen, false);
-            });
+            $("#btn-back").on("click", app.backButton);
 
             $("#btn-no").on("click", function (e) {
                 database.ref(getUsrDataLoc(app.currentUser.uid)).update({
@@ -424,7 +429,7 @@ $(document).ready(function () {
                     database.ref(getUsrDataLoc(user.uid)).once("value", function (usrSnap) {
                         app.currentUser = usrSnap.val();
                         if (app.currentUser.userHasEaten) {
-                            database.ref(getRestDataLoc(userData.lastRestaurantId)).once("value", function (restSnap) {
+                            database.ref(getRestDataLoc(app.currentUser.lastRestaurantId)).once("value", function (restSnap) {
                                 var restData = restSnap.val();
                                 app.showYesNo('Welcome Back, ' + user.displayName,
                                     `You recently satisfied a craving at ${ restData.name }!  Would you like to leave a review about your experience?`);
@@ -432,7 +437,7 @@ $(document).ready(function () {
                         }
                     });
                     // GO TO THE NEXT PAGE
-                    app.switchScreens("#login-screen", "#craving-select-screen", true);
+                    app.switchScreens("#login-screen", "#craving-select-screen", false);
                 } else {
                     $("#btn-sign-in").css("display", "block");
                 }
