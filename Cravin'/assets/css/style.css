@@ -1,7 +1,14 @@
 @font-face {
-  font-family: Heavitas;
-  src: url(../fonts/Heavitas.ttf);
+    font-family: 'Heavitas';
+    src: url('../fonts/heavitas-webfont.woff2') format('woff2'),
+         url('../fonts/heavitas-webfont.woff') format('woff'),
+         url('../fonts/Heavitas.ttf') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
 }
+
+
 
 html, body {
   min-height: 100vh;
@@ -14,6 +21,8 @@ html, body {
   text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
 }
 
+
+
 a { text-shadow: none;}
 h1 { font-size: 85px; }
 h2 { font-size: 65px; }
@@ -23,6 +32,11 @@ h4 { font-size: 20px; }
 .jumbotron {
   padding-top: 25px;
   background-color: transparent;
+}
+
+.navy {
+  color: #fefc3e;
+  background-color: #000;
 }
 
 #awning {
@@ -162,6 +176,8 @@ h4 { font-size: 20px; }
 .restaurant-info {
   text-align: left;
 }
+
+
 
 @media (min-width: 576px) {
   #title {
