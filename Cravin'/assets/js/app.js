@@ -52,7 +52,7 @@ var apiKeys = {
             "user-key": "029229483ea9d14f003cd7257516abde"
         },
     },
-  },
+ 
   yelp: {
     clientId: "dE4ardVf7tro8HdvDguNuA",
     clientSecret: "wdaKsDjLnqLqtp49StvQFag2fhR9p2Rvv5xTkTNtYjX6TyAzLpExHue5xEnpqYkn"
@@ -70,8 +70,9 @@ var apiUrls = {
 function getUsrDataLoc(uid) {
     return "users/" + uid;
 }
+
 function getRestDataLoc(rid) {
-    return "restaurants/" + rid;    
+    return "restaurants/" + rid;
 }
 
 
@@ -93,7 +94,8 @@ var provider = new firebase.auth.GoogleAuthProvider();
 
 $(document).ready(function () {
     var app = {
-
+        lastScreens: [],
+        currentScreen: "",
         latLong: [],
         restaurantResults: [],
         currentUser: null,
@@ -174,7 +176,11 @@ $(document).ready(function () {
         hideLoadingScreen: function () {
             $("#loading-screen").css("display", "none");
         },
-        switchScreens: function (closeId, openId, callback) {
+        switchScreens: function (closeId, openId, storeScreen, callback) {
+            app.currentScreen = openId;
+            if(storeScreen === true) {
+                app.lastScreens.push(closeId);
+            }
             $(closeId).animate({
                 opacity: 0
             }, 500, function () {
@@ -253,22 +259,25 @@ $(document).ready(function () {
                 app.populateResults();
                 app.hideLoadingScreen();
 
-                app.switchScreens("#craving-select-screen", "#results-screen");
+                app.switchScreens("#craving-select-screen", "#results-screen", true);
             })
 
         },
-        addRestuarantToDb: function(idx, callback) {
+        addRestuarantToDb: function (idx, callback) {
             var restaurant = app.restaurantResults[idx];
             var dbRestLoc = getRestDataLoc(restaurant.id);
             var dbUsrLoc = getUsrDataLoc(app.currentUser.uid);
-            
-            database.ref(dbRestLoc).once("value", function(snapshot) { 
+
+            database.ref(dbRestLoc).once("value", function (snapshot) {
                 var restData = snapshot.val();
-                if(!restData) {
+                if (!restData) {
                     database.ref(dbRestLoc).set(restaurant);
                 }
             });
-            database.ref(dbUsrLoc).update( { userHasEaten: true, lastRestaurantId: restaurant.id });
+            database.ref(dbUsrLoc).update({
+                userHasEaten: true,
+                lastRestaurantId: restaurant.id
+            });
         },
         eventListeners: function () {
             $("#btn-sign-out").on("click", function () {
@@ -281,7 +290,7 @@ $(document).ready(function () {
             });
             $(document).on("click", ".go-to-restaurant", function (e) {
                 e.preventDefault();
-                app.addRestuarantToDb(parseInt($(this).attr("data-index")),function() { 
+                app.addRestuarantToDb(parseInt($(this).attr("data-index")), function () {
                     window.open($(this).attr("href"));
                 });
             });
@@ -292,6 +301,18 @@ $(document).ready(function () {
             $("#btn-best").on('click', function (e) {
                 e.preventDefault();
                 app.findCraving("best")
+            });
+            $("#btn-back").on("click", function() {
+                // Check if we have a last screen stored
+                if(app.lastScreens.length < 0) {
+                    return;
+                };
+                // Grab the value before we pop it.
+                var lastScreen = app.lastScreens[app.lastScreens.length];
+                // pop the last screen from our array.
+                app.lastScreens.pop();
+                // Transition the screens.
+                app.switchScreens(app.currentScreen, lastScreen, false);
             });
 
             $("#btn-sign-in").on("click", function () {
@@ -307,7 +328,6 @@ $(document).ready(function () {
 
                     database.ref(getUsrDataLoc(app.currentUser.uid)).once("value", function (snapshot) {
                         var userData = snapshot.val();
-                        console.log(userData);
                         if (!userData) {
                             app.currentUser = new User(app.currentUser.uid, app.currentUser.displayName, app.currentUser.email, app.currentUser.photoURL);
                             database.ref(getUsrDataLoc(app.currentUser.uid)).update(app.currentUser);
@@ -321,7 +341,7 @@ $(document).ready(function () {
                     $(this).find('.craving-check-wrapper').css("display", "none");
                 });
                 $(this).find('.craving-check-wrapper').css("display", "block");
-            })
+            });
 
             firebase.auth().onAuthStateChanged(function (user) {
 
@@ -329,31 +349,32 @@ $(document).ready(function () {
                     databaseLocation = getUsrDataLoc(user.uid);
                     app.currentUser = user;
                     if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function (position) {
+                        navigator.geolocation.getCurresntPosition(function (position) {
                             app.latLong = [position.coords.latitude, position.coords.longitude];
-                            console.log(app.latLong);
                             app.getCity();
 
                         });
                     } else {
                         app.callApi("get", apiUrls.googleGeoLocation, "", function (response) {
-                            app.latLong = [ response.location.lat, response.location.lng ];
-                        });    
-                    }
+                            app.latLong = [response.location.lat, response.location.lng];
+                        });
+                    };
+                    database.ref(getUsrDataLoc(user.uid)).once("value", function(snapshot) {
+                        console.log(snapshot.val().userHasEaten);
+                    });
                     // GO TO THE NEXT PAGE
-                    app.switchScreens("#login-screen", "#craving-select-screen");
+                    app.switchScreens("#login-screen", "#craving-select-screen", true);
                 } else {
                     $("#btn-sign-in").css("display", "block");
-
                 }
             });
 
         },
 
     }
-    
+
     setTimeout(function () {
-        app.switchScreens("#splash-screen", "#login-screen");
+        app.switchScreens("#splash-screen", "#login-screen", false);
         app.eventListeners();
     }, 2000);
     if (!("geolocation" in navigator)) {
