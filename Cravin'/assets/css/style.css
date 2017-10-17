@@ -6,21 +6,30 @@
   font-weight: normal;
   font-style: normal;
 }
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
 
-html, body {
-  min-height: 100vh;
+body {
+  min-height: calc(100vh + 60);
   background-repeat: no-repeat;
   font-family: Heavitas, impact, helvetica;
   background-color: red;
-  background-size: cover;
   background: linear-gradient(red, black);
-  overflow-x: hidden;
+  -webkit-background: linear-gradient(red, black);
+  -ms-background: linear-gradient(red, black);
+  -o-background: linear-gradient(red, black);
+  
   /*text-shadow: -1px -1px 0 #f70, 1px -1px 0 #f70, -1px 1px 0 #f70, 1px 1px 0 #f70;*/
   text-shadow: -1px 0 yellow, 0 1px yellow, 1px 0 yellow, 0 -1px yellow;
 }
 
 
-
+#wrapper-background{
+  height: 100%;
+  
+}
   
 
 
@@ -103,21 +112,20 @@ nav {
 
 #footer {
   position: relative;
-  bottom: 0;
+  
   width: 100%;
   /* Set the fixed height of the footer here */
   text-align: center;
-  height: 60px;
-  line-height: 60px; /* Vertically center the text there */
-  background-color: transparent;
+  height: auto;
   letter-spacing: 5px;
+  padding-bottom: 10px;
 }
 
 #login-screen, #craving-select-screen, #splash-screen, #results-screen {
   position: relative;
   left: 0;
   top: 0;
-  width: 100vw;
+  width: 100%;
   min-height: 85vh;
   display: none;
   opacity: 0;
@@ -178,6 +186,7 @@ nav {
   padding: 20px;
   margin-top: 15px;
   color: black;
+  text-shadow: none;
 }
 
 .results-image {
