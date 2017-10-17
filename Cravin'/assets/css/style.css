@@ -1,14 +1,9 @@
 @font-face {
-    font-family: 'Heavitas';
-    src: url('../fonts/heavitas-webfont.woff2') format('woff2'),
-         url('../fonts/heavitas-webfont.woff') format('woff'),
-         url('../fonts/Heavitas.ttf') format('woff');
-    font-weight: normal;
-    font-style: normal;
-
+  font-family: 'Heavitas';
+  src: url('../fonts/heavitas-webfont.woff2') format('woff2'), url('../fonts/heavitas-webfont.woff') format('woff'), url('../fonts/Heavitas.ttf') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
-
-
 
 html, body {
   min-height: 100vh;
@@ -18,9 +13,34 @@ html, body {
   background-size: cover;
   background: linear-gradient(red, black);
   overflow-x: hidden;
-  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+  text-shadow: -1px -1px 0 #f70, 1px -1px 0 #f70, -1px 1px 0 #f70, 1px 1px 0 #f70;
 }
 
+
+a {
+  color: black;
+  }
+
+h1 {
+  font-size: 85px;
+}
+
+h2 {
+  font-size: 65px;
+}
+
+h3 {
+  font-size: 45px;
+}
+
+h4 {
+  font-size: 20px;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
 
 
 a { text-shadow: none;}
@@ -37,6 +57,7 @@ h6 { margin-left: 3px;
 }
 
 .row { margin-right: 0; margin-left: 0;}
+
 .jumbotron {
   padding-top: 25px;
   background-color: transparent;
@@ -88,8 +109,8 @@ a#btn-best.btn.btn-primary.btn-large:hover {
   background-color: transparent;
   letter-spacing: 5px;
 }
-#login-screen, #craving-select-screen, #splash-screen,
-#results-screen  {
+
+#login-screen, #craving-select-screen, #splash-screen, #results-screen {
   position: relative;
   left: 0;
   top: 0;
@@ -97,17 +118,19 @@ a#btn-best.btn.btn-primary.btn-large:hover {
   min-height: 85vh;
   display: none;
   opacity: 0;
-  
 }
+
 #splash-screen {
   display: block;
   opacity: 1;
 }
+
 #btn-sign-in {
   display: block;
   margin: 0 auto;
   margin-top: 10px;
 }
+
 #loading-screen {
   display: none;
   position: absolute;
@@ -116,29 +139,34 @@ a#btn-best.btn.btn-primary.btn-large:hover {
   width: 100vw;
   min-height: 100vh;
   height: 100%;
-  background-color: rgba(0,0,0,.7);
+  background-color: rgba(0, 0, 0, .7);
   z-index: 99999;
 }
+
 .loading-icon {
   position: fixed;
   color: orange;
   margin-left: calc((100vw / 2) - 40px);
   margin-top: calc((100vh / 2) - 10px);
 }
+
 .craving-buttons {
   margin-top: 40px;
 }
+
 .craving-buttons-group {
   margin-top: 40px;
 }
+
 .craving-buttons-group a {
   display: block;
   margin: 10px auto;
-  
 }
+
 .show-cravings {
   margin: 0 auto;
 }
+
 .results-box {
   border-radius: 10px;
   background-color: darkred;
@@ -147,19 +175,21 @@ a#btn-best.btn.btn-primary.btn-large:hover {
   margin-top: 15px;
   color: black;
 }
+
 .results-image {
   max-width: 300px;
   height: auto;
   float: left;
   margin-right: 10px;
 }
+
 .craving-box {
   height: 175px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
   z-index: 10;
-  margin-top: 20px;
+  margin: 20px;
 }
 
 .craving-check {
@@ -189,23 +219,26 @@ a#btn-best.btn.btn-primary.btn-large:hover {
   background-image: url('../images/pizza.png');
 }
 
+.restaurant-info {
+  text-align: left;
+}
+
+.navbar-brand {
+  margin: 10px;
+}
+
+
 /*Extra small devices (portrait phones, less than 576px)
  No media query since this is the default in Bootstrap*/
 
 
 /*Small devices (landscape phones, 576px and up)*/
 
-.restaurant-info {
-  text-align: left;
-}
-
-
 
 @media (min-width: 576px) {
   #title {
     font-size: 75px;
   }
-  
 }
 
 
