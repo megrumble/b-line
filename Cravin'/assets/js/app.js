@@ -52,11 +52,11 @@ var apiKeys = {
             "user-key": "029229483ea9d14f003cd7257516abde"
         },
     },
- 
-  yelp: {
-    clientId: "dE4ardVf7tro8HdvDguNuA",
-    clientSecret: "wdaKsDjLnqLqtp49StvQFag2fhR9p2Rvv5xTkTNtYjX6TyAzLpExHue5xEnpqYkn"
-  }
+
+    yelp: {
+        clientId: "dE4ardVf7tro8HdvDguNuA",
+        clientSecret: "wdaKsDjLnqLqtp49StvQFag2fhR9p2Rvv5xTkTNtYjX6TyAzLpExHue5xEnpqYkn"
+    }
 
 };
 
@@ -79,13 +79,13 @@ function getRestDataLoc(rid) {
 // Thank you StackOverflow.
 // Finds the distance between two locations, used for sort.
 function distance(lat1, lon1, lat2, lon2) {
-  var p = 0.017453292519943295; // Math.PI / 180
-  var c = Math.cos;
-  var a = 0.5 - c((lat2 - lat1) * p) / 2 +
-    c(lat1 * p) * c(lat2 * p) *
-    (1 - c((lon2 - lon1) * p)) / 2;
-  var milesAway = (12742 * Math.asin(Math.sqrt(a))) / 1.609344;
-  return (milesAway).toFixed(1); // 2 * R; R = 6371 km
+    var p = 0.017453292519943295; // Math.PI / 180
+    var c = Math.cos;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+    var milesAway = (12742 * Math.asin(Math.sqrt(a))) / 1.609344;
+    return (milesAway).toFixed(1); // 2 * R; R = 6371 km
 }
 
 
@@ -178,7 +178,7 @@ $(document).ready(function () {
         },
         switchScreens: function (closeId, openId, storeScreen, callback) {
             app.currentScreen = openId;
-            if(storeScreen === true) {
+            if (storeScreen === true) {
                 app.lastScreens.push(closeId);
             }
             $(closeId).animate({
@@ -302,9 +302,9 @@ $(document).ready(function () {
                 e.preventDefault();
                 app.findCraving("best")
             });
-            $("#btn-back").on("click", function() {
+            $("#btn-back").on("click", function () {
                 // Check if we have a last screen stored
-                if(app.lastScreens.length < 0) {
+                if (app.lastScreens.length < 0) {
                     return;
                 };
                 // Grab the value before we pop it.
@@ -349,7 +349,7 @@ $(document).ready(function () {
                     databaseLocation = getUsrDataLoc(user.uid);
                     app.currentUser = user;
                     if (navigator.geolocation) {
-                        navigator.geolocation.getCurresntPosition(function (position) {
+                        navigator.geolocation.getCurrentPosition(function (position) {
                             app.latLong = [position.coords.latitude, position.coords.longitude];
                             app.getCity();
 
@@ -359,7 +359,7 @@ $(document).ready(function () {
                             app.latLong = [response.location.lat, response.location.lng];
                         });
                     };
-                    database.ref(getUsrDataLoc(user.uid)).once("value", function(snapshot) {
+                    database.ref(getUsrDataLoc(user.uid)).once("value", function (snapshot) {
                         console.log(snapshot.val().userHasEaten);
                     });
                     // GO TO THE NEXT PAGE
